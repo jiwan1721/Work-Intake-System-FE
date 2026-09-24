@@ -4,10 +4,12 @@ import { CATEGORY_LABELS } from './statusLabels'
 
 export function AnalysisCard({ analysis }: { analysis: Analysis }) {
   return (
-    <section className="card" aria-labelledby="analysis-heading">
-      <h3 id="analysis-heading">AI analysis</h3>
+    <section aria-labelledby="analysis-heading">
+      <h4 className="section__head" id="analysis-heading">
+        AI analysis
+      </h4>
 
-      <dl className="card__grid">
+      <dl className="fields">
         <dt>Category</dt>
         <dd>{CATEGORY_LABELS[analysis.category] ?? analysis.category}</dd>
 
@@ -17,15 +19,18 @@ export function AnalysisCard({ analysis }: { analysis: Analysis }) {
         </dd>
 
         <dt>Summary</dt>
-        <dd>{analysis.summary}</dd>
+        <dd className="prose">{analysis.summary}</dd>
 
-        <dt>Recommended action</dt>
-        <dd>{analysis.recommendedAction}</dd>
+        <dt>Action</dt>
+        <dd className="prose">{analysis.recommendedAction}</dd>
       </dl>
 
-      <p className="card__footnote">
+      {/* The verdict is attributed: which model, at what time, on which
+          attempt. An unattributed machine judgement is the thing this product
+          exists not to present. */}
+      <p className="footnote">
         Analysed {new Date(analysis.analysedAt).toLocaleString()}
-        {analysis.model ? ` by ${analysis.model}` : ''}
+        {analysis.model ? ` · ${analysis.model}` : ''}
       </p>
     </section>
   )

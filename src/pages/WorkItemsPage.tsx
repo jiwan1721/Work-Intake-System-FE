@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router'
 
 import { isWorkItemStatus, type WorkItemStatus } from '../api/types'
+import { NetworkBand } from '../components/NetworkBand'
 import { Pagination } from '../components/Pagination'
-import { StatusFilter } from '../components/StatusFilter'
 import { WorkItemDetail } from '../components/WorkItemDetail'
 import { WorkItemTable } from '../components/WorkItemTable'
 import { EmptyState, ErrorBanner, LoadingBlock, Spinner } from '../components/feedback/Feedback'
@@ -36,42 +36,45 @@ export function WorkItemsPage() {
   }
 
   return (
-    <main className="page">
-      <header className="page__header">
-        <div>
-          <h1>TriageDesk</h1>
-          <p className="muted">AI-assisted work intake</p>
+    <div className="app">
+      <header className="masthead">
+        <div className="masthead__mark">
+          <h1 className="masthead__name">TriageDesk</h1>
+          <p className="masthead__strap">AI-assisted work intake</p>
         </div>
         {/* A background refetch should be visible but must not replace the
             table the operator is reading. */}
         {query.isFetching && !query.isPending ? (
           <span className="refreshing">
-            <Spinner label="" /> Refreshing…
+            <Spinner label="" /> Refreshing
           </span>
         ) : null}
       </header>
 
-      <StatusFilter
+      <NetworkBand
         value={status}
+        count={query.data?.count}
         onChange={(next) => update({ status: next, page: undefined, item: undefined })}
       />
 
-      {query.isPending ? <LoadingBlock label="Loading work items…" /> : null}
+      <div className={selectedId ? 'main main--split' : 'main'}>
+        <div className="queue">
+          {query.isPending ? <LoadingBlock label="Loading work items…" /> : null}
 
-      {query.isError ? (
-        <ErrorBanner error={query.error} onRetry={() => void query.refetch()} />
-      ) : null}
+          {query.isError ? (
+            <ErrorBanner error={query.error} onRetry={() => void query.refetch()} />
+          ) : null}
 
-      {query.data ? (
-        <div className={selectedId ? 'layout layout--split' : 'layout'}>
-          <div className="layout__list">
-            {query.data.results.length === 0 ? (
+          {query.data ? (
+            query.data.results.length === 0 ? (
               <EmptyState
                 title={
-                  status ? `No ${statusLabel(status).toLowerCase()} items 🎉` : 'No work items yet'
+                  status ? `No ${statusLabel(status).toLowerCase()} items` : 'No work items yet'
                 }
                 hint={
-                  status ? 'Try a different filter.' : 'Run `make seed` to load some demo items.'
+                  status
+                    ? 'Nothing is on this part of the line right now. Choose another station.'
+                    : 'New work items appear here as they arrive from the intake system.'
                 }
               />
             ) : (
@@ -88,14 +91,14 @@ export function WorkItemsPage() {
                   onChange={(next) => update({ page: String(next) })}
                 />
               </>
-            )}
-          </div>
-
-          {selectedId ? (
-            <WorkItemDetail id={selectedId} onClose={() => update({ item: undefined })} />
+            )
           ) : null}
         </div>
-      ) : null}
-    </main>
+
+        {selectedId ? (
+          <WorkItemDetail id={selectedId} onClose={() => update({ item: undefined })} />
+        ) : null}
+      </div>
+    </div>
   )
 }

@@ -30,25 +30,27 @@ export function FailureCard({
   const explanation = EXPLANATIONS[error.code] ?? 'The analysis did not complete.'
 
   return (
-    <section className="card card--failure" aria-labelledby="failure-heading" role="alert">
-      <h3 id="failure-heading">Analysis failed</h3>
-      <p>{explanation}</p>
+    <section className="failure" aria-labelledby="failure-heading" role="alert">
+      <h4 className="section__head" id="failure-heading">
+        Analysis failed
+      </h4>
+      <p className="prose">{explanation}</p>
 
-      <dl className="card__grid">
+      <dl className="fields">
         <dt>Error code</dt>
         <dd>
           <code>{error.code}</code>
         </dd>
 
         <dt>Details</dt>
-        <dd className="card__detail-text">{error.message}</dd>
+        <dd className="prose">{error.message}</dd>
 
         <dt>Attempts</dt>
         <dd>{attemptCount}</dd>
       </dl>
 
       {!canRetry ? (
-        <p className="card__footnote">
+        <p className="footnote">
           This item has used all of its analysis attempts. It needs to be handled manually.
         </p>
       ) : null}

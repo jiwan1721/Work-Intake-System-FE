@@ -1,3 +1,5 @@
+import { NextIcon, PrevIcon } from './icons'
+
 export function Pagination({
   page,
   totalPages,
@@ -11,32 +13,34 @@ export function Pagination({
 }) {
   if (totalPages <= 1) {
     return (
-      <p className="pagination__summary">
+      <p className="frequency__summary">
         {count} item{count === 1 ? '' : 's'}
       </p>
     )
   }
 
   return (
-    <nav className="pagination" aria-label="Pagination">
+    <nav className="frequency" aria-label="Pagination">
       <button
         type="button"
-        className="button button--secondary"
+        className="button"
         onClick={() => onChange(page - 1)}
         disabled={page <= 1}
       >
+        <PrevIcon size={14} />
         Previous
       </button>
-      <span className="pagination__summary" aria-live="polite">
+      <span className="frequency__summary" aria-live="polite">
         Page {page} of {totalPages} · {count} items
       </span>
       <button
         type="button"
-        className="button button--secondary"
+        className="button"
         onClick={() => onChange(page + 1)}
         disabled={page >= totalPages}
       >
         Next
+        <NextIcon size={14} />
       </button>
     </nav>
   )

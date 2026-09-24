@@ -1,0 +1,120 @@
+{
+  "title": "Choose the visual world for TriageDesk — bolder hand",
+  "question": "Foreign forms only, at full commitment. The first dealt leads. Every direction from the previous round is eliminated.",
+  "options": [
+    {
+      "id": "challenger-onebit",
+      "label": "System 1.0",
+      "kicker": "THE DEAL",
+      "lineage": "early one-bit desktop — ordered dither, window chrome, marching ants",
+      "thesis": "The queue is not a page about an operating system; it is one. Black and white pixels only, every tone an ordered stipple dither. This is the one world here whose native grammar already contains everything the product needs — selection, disabled, alert, progress, window lineage — so nothing has to be invented and nothing is decoration. A locked action is dimmed dither, not 0.55 opacity. A failed analysis is a system alert, which is the truth: the machine faulted.",
+      "palette": ["#000000", "#FFFFFF", "#808080", "#C0C0C0"],
+      "materials": [
+        "ordered stipple dither 25/50/75/87",
+        "1px black chrome",
+        "marching ants",
+        "desktop pattern"
+      ],
+      "viewport": "Full-bleed desktop, no margins. A real menu bar across the top — File, Edit, View, Queue, Help — with working menus. The queue is a single window titled WORK QUEUE filling the plane, rows as list stripes. The selected row inverts to solid black. An ANALYSING row's status cell animates its dither. Bottom-left, a small pinned Info window holds live counts. No sidebar, no cards, no shadows but the one-pixel window drop.",
+      "risk": "Pixel type is unreadable at body size, so customer prose sets in a crisp grotesk while chrome, labels and display stay pixel — a deliberate split, not a lapse. Real danger is museum pastiche: this has to be a working console, not a Mac OS 8 tribute. Dither must not shimmer on scroll.",
+      "raised": [
+        {
+          "from": "challenger-sevenseg",
+          "raise": "Absence is drawn as deliberately as light: an item with no analysis yet shows ghosted field cells at their exact final size, so nothing reflows when the verdict lands."
+        },
+        {
+          "from": "challenger-quarry",
+          "raise": "Composition is stacked mass with real voids between sections rather than uniform gutters — a dense passage earns a quiet one."
+        },
+        {
+          "from": "challenger-cape",
+          "raise": "One modulus rules every alignment — an integer pixel grid, no half-pixels anywhere — and labels ride the structure instead of floating beside it."
+        }
+      ],
+      "hero": "https://impeccable.style/worlds/cards/medium-native-one-bit-desktop-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/medium-native-one-bit-desktop.webp"
+    },
+    {
+      "id": "challenger-atlas",
+      "label": "Night Atlas",
+      "verdict": "competitive",
+      "lineage": "celestial star atlas — magnitude as ranked dot diameter",
+      "thesis": "Priority stops being a coloured pill and becomes magnitude. Every item is a star plotted on a fixed magnitude ramp, so URGENT reads as size before it reads as language — legible in peripheral vision across a shift. The item under the eye is ringed in red-flashlight amber, the one colour that does not destroy night vision.",
+      "palette": ["#0B1436", "#F2F0E6", "#E0873A", "#7E8CA8"],
+      "materials": [
+        "deep navy chart ground",
+        "chalk-white star ink",
+        "night-vision amber",
+        "engraved coordinate grid"
+      ],
+      "viewport": "A navy plate. Items plotted as a ranked field, dot diameter carrying priority, with a coordinate grid ruling the whole surface. Pagination is plate-to-plate with matched edges. A light serif italic names things; tiny tabular figures carry coordinates and timestamps.",
+      "case": "Holds product clarity — the magnitude ramp is genuinely better than pills for triage, and it solves priority in peripheral vision. Loses audience identification: an astronomy chart on an insurance desk is borrowed, and a plotted field is a worse list than a list.",
+      "risk": "A queue is read in order, not in space; forcing a scatter risks losing the one thing the operator needs most.",
+      "board": "https://impeccable.style/worlds/cards/notation-diagram-systems-star-atlas.webp"
+    },
+    {
+      "id": "challenger-transit",
+      "label": "The Network",
+      "verdict": "competitive",
+      "lineage": "metropolitan transit diagram fired as midnight-blue enamel",
+      "thesis": "The workflow IS a line diagram. RECEIVED → ANALYSING → READY FOR REVIEW → COMPLETED is a route with FAILED as a branch and retry as a reversal. Every item is a service travelling that line, and its status is simply which station it currently occupies. A reviewer sees the state machine in one glance, which is exactly what this submission is graded on.",
+      "palette": ["#0B1230", "#FFFFFF", "#E21D2D", "#1E5BFF", "#FFC20E"],
+      "materials": [
+        "midnight enamel",
+        "porcelain tile",
+        "line ink at 45/90 degrees",
+        "interchange circle"
+      ],
+      "viewport": "The state machine runs as a fixed enamel diagram along the top, lines bending only at 45 and 90 degrees. Beneath it the queue lists services, each tagged to its station. Selecting an item lights its route and dims the rest; the FAILED branch burns scarlet.",
+      "case": "Beats the leader on audience identification — universally legible, and it makes the graded architecture visible on sight. Loses product clarity for the primary job: a transit map is a poor list, and the diagram risks becoming decoration parked above an ordinary table.",
+      "risk": "Ten items on one diagram is elegant; four hundred is a smear.",
+      "board": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram.webp"
+    },
+    {
+      "id": "challenger-sevenseg",
+      "label": "Seven Segment",
+      "verdict": "declined",
+      "lineage": "LED segment displays — clocks, totems, scoreboards",
+      "thesis": "One eight-cell mask makes every glyph; unlit segments are designed too.",
+      "palette": ["#0A0A0A", "#FF2D2D", "#1A1A1A", "#FFB000"],
+      "case": "Loses both axes on a hard product fact: this content is prose. A segment mask cannot set 'Duplicate direct debit taken on 14 Sept' without mangling it, and abandoning the grammar for the content means never committing to it. Kept: absence drawn as deliberately as light — donated to the leader as ghosted field cells.",
+      "risk": "Cannot render the product's actual content."
+    },
+    {
+      "id": "challenger-quarry",
+      "label": "Cloud Quarry",
+      "verdict": "declined",
+      "lineage": "surreal weather quarry — cut blocks of cloud",
+      "thesis": "Blocks of weather cut, lifted and assembled into temporary architecture.",
+      "palette": ["#F4F7FA", "#5FA8E0", "#6B7280", "#C9D3DC"],
+      "case": "Loses both axes — cut/lift/join has no mapping onto analyse/retry/complete, and volumetric rendering spends the performance budget on nothing the operator needs. Kept: composition as stacked mass with real voids between sections — donated to the leader.",
+      "risk": "Metaphor with no product referent."
+    },
+    {
+      "id": "challenger-cape",
+      "label": "Drawcord",
+      "verdict": "declined",
+      "lineage": "silk cape with hidden drawcord channels",
+      "thesis": "One pull turns a flat plane into structured volume.",
+      "palette": ["#0A0A0A", "#C8A24A", "#3A3F45", "#6E757C"],
+      "case": "Loses both axes — one transforming control is a lovely idea that carries neither status, priority nor history, and the fashion register reads borrowed here. Kept: one modulus ruling every alignment, and labels riding the structure — donated to the leader.",
+      "risk": "Too thin to carry a whole operate surface."
+    }
+  ],
+  "canonCard": {
+    "id": "canon",
+    "label": "The Console",
+    "kicker": "THE STANDARD",
+    "lineage": "Linear / Jira / Retool operations console",
+    "thesis": "The category standard, played straight and at full fidelity: neutral ground, left rail, dense data table, pill status chips, one accent hue.",
+    "palette": ["#FFFFFF", "#0D0F12", "#5B5BD6", "#E4E7EC"],
+    "materials": ["neutral surface", "1px hairline", "system sans"],
+    "viewport": "Left rail navigation, filter bar, dense sortable table, right detail drawer.",
+    "risk": "This is what the incumbent already is. Chosen deliberately it is legitimate; arrived at by default it is the template."
+  },
+  "reroll": {
+    "enabled": true,
+    "steer": true,
+    "registers": ["plain", "safer", "bolder"]
+  }
+}

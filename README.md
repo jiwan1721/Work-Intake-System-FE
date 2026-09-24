@@ -22,14 +22,14 @@ The backend must be running separately for API calls to work. See the root
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start the dev server |
-| `npm run build` | Production build |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run test` | Vitest (watch mode) |
-| `npm run test:ci` | Vitest (single run, for CI) |
+| Command             | What it does                |
+| ------------------- | --------------------------- |
+| `npm run dev`       | Start the dev server        |
+| `npm run build`     | Production build            |
+| `npm run lint`      | ESLint                      |
+| `npm run typecheck` | `tsc --noEmit`              |
+| `npm run test`      | Vitest (watch mode)         |
+| `npm run test:ci`   | Vitest (single run, for CI) |
 
 ---
 

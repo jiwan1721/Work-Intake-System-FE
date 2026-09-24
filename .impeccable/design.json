@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "world": "metropolitan transit diagram fired as midnight-blue enamel",
+  "seedKey": "6246435e",
+  "source": "src/index.css",
+  "mode": "operate",
+  "surfaces": {
+    "enamel": "#0b1230",
+    "enamelDeep": "#060a1f",
+    "enamelRaised": "#121b41",
+    "porcelain": "#ffffff",
+    "porcelainTile": "#eef1f7"
+  },
+  "rules": {
+    "rule": "#24305e",
+    "ruleBright": "#5a6cae",
+    "porcelainRule": "#d4dae6"
+  },
+  "text": {
+    "onEnamel": "#f2f5ff",
+    "onEnamelSoft": "#aab8e2",
+    "onPorcelain": "#0b1230",
+    "onPorcelainSoft": "#4e5a80"
+  },
+  "lineInks": {
+    "RECEIVED": "#ffffff",
+    "ANALYSING": "#6fa2ff",
+    "READY_FOR_REVIEW": "#ffc20e",
+    "FAILED": "#ff6b74",
+    "COMPLETED": "#45d989"
+  },
+  "lineInksOnPorcelain": {
+    "RECEIVED": "#6b7690",
+    "ANALYSING": "#1e5bff",
+    "READY_FOR_REVIEW": "#a06f00",
+    "FAILED": "#c8102e",
+    "COMPLETED": "#0f7a45"
+  },
+  "fills": {
+    "scarlet": "#be1622",
+    "scarletHover": "#a01019"
+  },
+  "focus": {
+    "onEnamel": "#ffc20e",
+    "onPorcelain": "#0b1230"
+  },
+  "type": {
+    "sans": "Overpass",
+    "mono": "Overpass Mono",
+    "serif": "Literata",
+    "display": "clamp(1.9rem, 1.2rem + 2.4vw, 3.1rem)",
+    "measure": "68ch",
+    "monoScope": ["ids", "times", "error-codes", "counts", "tabular-figures"]
+  },
+  "geometry": {
+    "angles": [45, 90],
+    "markerSlot": "18px",
+    "trunkWidth": "2px",
+    "queueMaxWidth": "1062px",
+    "radius": "2px"
+  },
+  "priorityMarks": {
+    "URGENT": "interchange",
+    "HIGH": "filled",
+    "MEDIUM": "ring-14",
+    "LOW": "ring-9",
+    "UNRATED": "ring-10-dashed"
+  },
+  "motion": {
+    "ease": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "easeTravel": "cubic-bezier(0.22, 0.61, 0.36, 1)",
+    "signature": "arrival: 30px travel 0.55s + expanding ring 0.8s, on real status change only",
+    "reducedMotion": "collapses to destination state"
+  },
+  "accessibility": {
+    "standard": "WCAG 2.2 AA",
+    "verified": "numerically, every token pair",
+    "minBodyContrast": 4.5,
+    "minMarkContrast": 3.0
+  },
+  "bans": [
+    "cards",
+    "uniform-rounded-rectangles",
+    "drop-shadows",
+    "side-accent-borders",
+    "monospace-as-costume",
+    "decorative-use-of-line-inks"
+  ],
+  "open": ["enamel and porcelain render as flat fills, not materials"]
+}

@@ -2,8 +2,9 @@ import type { StatusTransition } from '../api/types'
 import { statusLabel } from './statusLabels'
 
 /**
- * The audit trail (PLAN §4). Cheap to show, and the sort of thing a regulated
- * domain expects to be able to point at.
+ * The audit trail (PLAN §4), drawn as the route this item has actually
+ * travelled: one stop per transition, connected. In a regulated domain this is
+ * the thing you have to be able to point at.
  */
 export function TransitionHistory({ transitions }: { transitions: StatusTransition[] }) {
   if (transitions.length === 0) {
@@ -11,8 +12,10 @@ export function TransitionHistory({ transitions }: { transitions: StatusTransiti
   }
 
   return (
-    <section className="card" aria-labelledby="history-heading">
-      <h3 id="history-heading">History</h3>
+    <section aria-labelledby="history-heading">
+      <h4 className="section__head" id="history-heading">
+        History
+      </h4>
       <ol className="history">
         {transitions.map((transition) => (
           <li key={`${transition.createdAt}-${transition.toStatus}`} className="history__entry">

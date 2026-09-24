@@ -1,72 +1,135 @@
-/* Minimal plain CSS (PLAN §9). The effort here goes into readable states,
-   not visual polish. */
+/* TriageDesk — "the workflow is a line diagram".
+   Direction contract: .impeccable/surfaces/src-pages-workitemspage-tsx.md
+   Midnight-blue enamel carries the network and the queue; an opened item
+   unfolds as a porcelain plate. Line inks are bound to statuses and are never
+   used decoratively. Lines bend only at 45° and 90°. */
+
+@font-face {
+  font-family: 'Overpass';
+  src: url('/fonts/overpass-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Overpass Mono';
+  src: url('/fonts/overpass-mono-var.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata-var.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-display: swap;
+}
 
 :root {
-  --text: #1f2430;
-  --text-muted: #5b6474;
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --border: #dfe3ea;
-  --accent: #2f5bd7;
-  --accent-soft: #eaf0fd;
-  --danger: #b3261e;
-  --danger-bg: #fdecea;
-  --success: #1d6f42;
-  --success-bg: #e7f4ec;
-  --warning: #8a5a00;
-  --warning-bg: #fdf3e2;
-  --radius: 8px;
+  /* Enamel: the ground the network is fired onto. */
+  --enamel: #0b1230;
+  --enamel-deep: #060a1f;
+  --enamel-raised: #121b41;
+  --rule: #24305e;
+  /* 3.67:1 on the enamel ground — this draws unselected station rings and the
+     ghost cell, both of which carry state, so it has to clear 1.4.11. */
+  --rule-bright: #5a6cae;
+  --focus: #ffc20e;
+  --focus-on-porcelain: #0b1230;
 
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Porcelain: the reading plate. */
+  --porcelain: #ffffff;
+  --porcelain-tile: #eef1f7;
+  --porcelain-rule: #d4dae6;
+
+  /* Text. Secondary is tinted from the enamel hue, never gray. */
+  --on-enamel: #f2f5ff;
+  --on-enamel-soft: #aab8e2;
+  --on-porcelain: #0b1230;
+  --on-porcelain-soft: #4e5a80;
+
+  /* Line inks — one per status, brightened to hold contrast on enamel.
+     Each is a graphical mark (>=3:1) and a text colour (>=4.5:1). */
+  --ink-received: #ffffff;
+  --ink-analysing: #6fa2ff;
+  --ink-ready: #ffc20e;
+  --ink-failed: #ff6b74;
+  --ink-completed: #45d989;
+
+  /* Saturated fills need a deeper scarlet to carry white text at AA. */
+  --scarlet-fill: #be1622;
+  --scarlet-fill-hover: #a01019;
+
+  --measure: 68ch;
+  --step: 8px;
+
+  --sans: 'Overpass', ui-sans-serif, system-ui, sans-serif;
+  --mono: 'Overpass Mono', ui-monospace, 'SF Mono', monospace;
+  --serif: 'Literata', Georgia, serif;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* The expo curve above spends ~80% of its distance in the first 90ms, which
+     made the arrival invisible. Travel gets a curve you can actually watch. */
+  --ease-travel: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  font-family: var(--sans);
   font-size: 16px;
   line-height: 1.5;
-  color: var(--text);
-  background: var(--bg);
-  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+  /* Browser surfaces belong to the design system too. */
+  accent-color: var(--ink-ready);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--enamel);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--enamel);
+  color: var(--on-enamel);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--ink-ready);
+  color: var(--enamel);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* Amber is 1.62:1 on white, so the plate and the toasts take the navy ring. */
+.plate :focus-visible,
+.toast :focus-visible {
+  outline-color: var(--focus-on-porcelain);
+}
+
+/* Scrollbars are part of the enamel, not the browser's idea of grey. */
+* {
+  scrollbar-color: var(--rule-bright) transparent;
+  scrollbar-width: thin;
 }
 
 h1,
 h2,
 h3 {
-  line-height: 1.25;
-  margin: 0 0 0.5rem;
-}
-
-h1 {
-  font-size: 1.5rem;
-}
-h2 {
-  font-size: 1.2rem;
-}
-h3 {
-  font-size: 1rem;
+  margin: 0;
+  line-height: 1.15;
+  font-weight: 800;
 }
 
 button {
   font: inherit;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.muted {
-  color: var(--text-muted);
+  color: inherit;
 }
 
 .visually-hidden {
@@ -74,45 +137,593 @@ button:disabled {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
-/* --- Layout --------------------------------------------------------------- */
+/* --- Shell ---------------------------------------------------------------- */
 
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  background: radial-gradient(120% 70% at 78% -10%, #16204a 0%, transparent 62%), var(--enamel);
 }
 
-.page__header {
+.masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--step);
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead__mark {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.masthead__name {
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3.1rem);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.masthead__strap {
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--on-enamel-soft);
+}
+
+/* --- Network band: the state machine, and the filter ---------------------- */
+
+.band {
+  padding: 22px 28px 26px;
+  border-bottom: 1px solid var(--rule);
+  background: linear-gradient(180deg, rgb(255 255 255 / 3%), transparent);
+}
+
+.band__route {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  position: relative;
+  max-width: 1180px;
+}
+
+/* The trunk: one 90° line through every station centre. */
+.band__route::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--rule-bright);
+}
+
+/* align-content pins every station's dot and label to the top of the row.
+   Without it the station carrying the count stretches the grid row and the
+   other labels drift down into the FAILED branch's label. */
+.station {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 8px;
+  padding: 0 4px 2px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+.station__dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--rule-bright);
+  background: var(--enamel);
+  display: grid;
+  place-items: center;
+  transition:
+    border-color 0.18s var(--ease),
+    background-color 0.18s var(--ease),
+    transform 0.18s var(--ease);
+}
+
+.station__dot::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color 0.18s var(--ease);
+}
+
+.station:hover .station__dot {
+  border-color: var(--on-enamel);
+  transform: scale(1.08);
+}
+
+.station__label {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--on-enamel-soft);
+  transition: color 0.18s var(--ease);
+}
+
+/* The figure rides on the station it counts, reporting the authoritative
+   count the list endpoint returned for this corridor. Deliberately NOT at
+   display scale: a big number over a small label is the hero-metric template,
+   and this one restates the total Pagination already prints. */
+.station__count {
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--on-enamel);
+  margin-top: 2px;
+}
+
+.station:hover .station__label,
+.station[aria-pressed='true'] .station__label {
+  color: var(--on-enamel);
+}
+
+/* The chosen corridor burns brightest; the rest of the network stays legible. */
+.station[aria-pressed='true'] .station__dot {
+  border-color: currentcolor;
+  background: var(--enamel);
+  box-shadow: 0 0 0 4px rgb(255 255 255 / 8%);
+}
+
+.station[aria-pressed='true'] .station__dot::after {
+  background: currentcolor;
+}
+
+.station--all {
+  color: var(--ink-received);
+}
+.station--received {
+  color: var(--ink-received);
+}
+.station--analysing {
+  color: var(--ink-analysing);
+}
+.station--ready_for_review {
+  color: var(--ink-ready);
+}
+.station--failed {
+  color: var(--ink-failed);
+}
+.station--completed {
+  color: var(--ink-completed);
+}
+
+/* FAILED is a branch off the trunk, at 45°, not another stop on the line.
+   It hangs from the ANALYSING cell so the diagonal actually meets the trunk
+   at that station's centre instead of floating in its own row. */
+.band__cell {
+  position: relative;
+  display: grid;
+}
+
+.band__branch {
+  position: absolute;
+  left: 50%;
+  top: 14px;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
 }
 
-.layout {
+.band__diagonal {
+  flex: none;
+  display: block;
+  color: var(--ink-failed);
+}
+
+/* The dot centres on the branch's level run: 14px (branch offset) + 61px
+   (the SVG's drop) - 14px (half the dot) = 47px. */
+.station--inline {
+  grid-template-columns: 28px auto;
+  align-items: center;
+  justify-items: start;
+  gap: 10px;
+  margin-top: 47px;
+  padding: 0;
+}
+
+/* --- Queue ---------------------------------------------------------------- */
+
+.main {
   display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.layout--split {
-  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .layout--split {
-    grid-template-columns: 1fr;
+.main--split {
+  grid-template-columns: minmax(0, 1.35fr) minmax(380px, 0.85fr);
+}
+
+.queue {
+  padding: 18px 28px 48px;
+  min-width: 0;
+}
+
+/* Without a ceiling the three columns strand themselves at opposite edges of
+   a wide monitor and the row stops reading as one line of information. The
+   width lands the status column under the last station on the trunk above. */
+.services {
+  width: 100%;
+  max-width: 1062px;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.service__cell-status {
+  width: 190px;
+}
+
+.services caption {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-enamel-soft);
+  padding-bottom: 10px;
+}
+
+.services th {
+  text-align: left;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-enamel-soft);
+  padding: 0 12px 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.services th:first-child {
+  padding-left: 0;
+}
+
+.services td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.services td:first-child {
+  padding-left: 0;
+}
+
+/* The trunk continues down the queue: every item is a station on one line,
+   which is the thesis. Without it the queue is a table with a dot in it. */
+.service__cell-item {
+  width: 1%;
+  white-space: nowrap;
+  position: relative;
+}
+
+.service__cell-item::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-bright);
+}
+
+/* The line terminates at the first and last stations, not at the cell edge. */
+.services tbody tr:first-child .service__cell-item::before {
+  top: 25px;
+}
+
+.services tbody tr:last-child .service__cell-item::before {
+  bottom: calc(100% - 25px);
+}
+
+/* The open item lights its own segment of the route. */
+.service--selected .service__cell-item::before {
+  background: var(--row-ink);
+  width: 3px;
+}
+
+.service__stub {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.service__ident {
+  display: grid;
+  gap: 3px;
+}
+
+/* The interchange marker: a station on the queue's trunk. Every variant keeps
+   the same 18px slot so each one centres on the line running behind it. */
+.marker {
+  flex: none;
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.marker::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: var(--dot, 14px);
+  height: var(--dot, 14px);
+  border-radius: 50%;
+  border: 2px solid currentcolor;
+  background: var(--enamel);
+}
+
+.marker--filled::before {
+  background: currentcolor;
+}
+
+.marker--interchange::before {
+  box-shadow:
+    0 0 0 2px var(--enamel),
+    0 0 0 4px currentcolor;
+}
+
+.marker--tick {
+  --dot: 9px;
+}
+
+/* Unrated is not the same mark as LOW. Without its own mark the queue
+   silently reports every unanalysed item as low priority. */
+.marker--unrated {
+  --dot: 10px;
+}
+
+.marker--unrated::before {
+  border-style: dashed;
+}
+
+.marker--received {
+  color: var(--ink-received);
+}
+.marker--analysing {
+  color: var(--ink-analysing);
+}
+.marker--ready_for_review {
+  color: var(--ink-ready);
+}
+.marker--failed {
+  color: var(--ink-failed);
+}
+.marker--completed {
+  color: var(--ink-completed);
+}
+
+/* The signature moment: a landed verdict travels the item in along its line
+   and rings the station in its new ink. Position and ink only — never an
+   opacity fade on the marker, which is what a status pill does.
+   It fires ONLY on a real status change (WorkItemTable tracks the previous
+   status); playing it on every first paint would spend the gesture. */
+@keyframes arrive {
+  from {
+    transform: translateX(-30px);
+  }
+  to {
+    transform: translateX(0);
   }
 }
 
-.layout__list {
-  min-width: 0;
+@keyframes arrive-ring {
+  from {
+    opacity: 0.95;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+.marker--arriving {
+  animation: arrive 0.55s var(--ease-travel) both;
+}
+
+/* The ring is what makes an arrival catch the eye across a long queue. */
+.marker--arriving::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 2px solid currentcolor;
+  animation: arrive-ring 0.8s var(--ease-travel) both;
+}
+
+@keyframes working {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(111 162 255 / 55%);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgb(111 162 255 / 0%);
+  }
+}
+
+.marker--analysing::before {
+  animation: working 1.8s ease-in-out infinite;
+}
+
+.service__id {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--on-enamel);
+}
+
+/* A row-sized target. The 13px identifier was the only way in before, which
+   is both a WCAG 2.5.8 failure and the wrong hit area for shift work. */
+.service__open {
+  display: block;
+  width: 100%;
+  padding: 2px 0 4px;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.service__open:hover .service__subject {
+  color: var(--ink-ready);
+}
+
+.service__subject {
+  display: block;
+  max-width: 62ch;
+}
+
+.service__logged {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-enamel-soft);
+}
+
+.service--selected td {
+  background: var(--enamel-raised);
+}
+
+.services tbody tr:hover td {
+  background: rgb(255 255 255 / 4%);
+}
+
+.service--received {
+  --row-ink: var(--ink-received);
+}
+.service--analysing {
+  --row-ink: var(--ink-analysing);
+}
+.service--ready_for_review {
+  --row-ink: var(--ink-ready);
+}
+.service--failed {
+  --row-ink: var(--ink-failed);
+}
+.service--completed {
+  --row-ink: var(--ink-completed);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status--received {
+  color: var(--ink-received);
+}
+.status--analysing {
+  color: var(--ink-analysing);
+}
+.status--ready_for_review {
+  color: var(--ink-ready);
+}
+.status--failed {
+  color: var(--ink-failed);
+}
+.status--completed {
+  color: var(--ink-completed);
+}
+
+.status__bar {
+  width: 16px;
+  height: 4px;
+  border-radius: 2px;
+  background: currentcolor;
+  flex: none;
+}
+
+.priority {
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-enamel-soft);
+  white-space: nowrap;
+}
+
+.priority--high,
+.priority--urgent {
+  color: var(--on-enamel);
+  font-weight: 600;
+}
+
+/* Absence stated, not left blank — the row keeps its height either way. */
+.priority--none {
+  color: var(--on-enamel-soft);
+  opacity: 0.75;
+}
+
+/* These tokens are tuned for the enamel ground; on the porcelain plate the
+   same rules rendered URGENT as near-white on white. */
+.plate .priority {
+  color: var(--on-porcelain-soft);
+}
+
+.plate .priority--high {
+  color: #8a4b00;
+  font-weight: 600;
+}
+
+.plate .priority--urgent {
+  color: #c8102e;
+  font-weight: 600;
+}
+
+/* --- Pagination ----------------------------------------------------------- */
+
+/* Shares the table's ceiling so Next lands on the table's right edge rather
+   than drifting out to the window's. */
+.frequency {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--step);
+  margin-top: 20px;
+  max-width: 1062px;
+}
+
+.frequency__summary {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-enamel-soft);
 }
 
 /* --- Buttons -------------------------------------------------------------- */
@@ -120,382 +731,657 @@ button:disabled {
 .button {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  padding: 0.45rem 0.9rem;
-  background: var(--surface);
-  color: var(--text);
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--rule-bright);
+  background: transparent;
+  color: var(--on-enamel);
+  font-weight: 600;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
+  border-radius: 2px;
+  transition:
+    background-color 0.16s var(--ease),
+    border-color 0.16s var(--ease),
+    transform 0.16s var(--ease);
 }
 
 .button:hover:not(:disabled) {
-  border-color: var(--accent);
+  border-color: var(--on-enamel);
+  background: rgb(255 255 255 / 6%);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  color: var(--on-enamel-soft);
+  border-color: var(--rule);
 }
 
 .button--primary {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--scarlet-fill);
+  border-color: var(--scarlet-fill);
+  color: #fff;
+  font-weight: 600;
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--scarlet-fill-hover);
+  border-color: var(--scarlet-fill-hover);
+}
+
+.button--primary:disabled {
+  background: var(--rule);
+  border-color: var(--rule);
+  color: var(--on-enamel-soft);
+}
+
+.button__icon {
+  flex: none;
+}
+
+/* On the porcelain plate the buttons invert. */
+.plate .button {
+  border-color: var(--porcelain-rule);
+  color: var(--on-porcelain);
+}
+
+.plate .button:hover:not(:disabled) {
+  border-color: var(--on-porcelain);
+  background: var(--porcelain-tile);
+}
+
+.plate .button:disabled {
+  color: var(--on-porcelain-soft);
+  border-color: var(--porcelain-rule);
+}
+
+.plate .button--primary {
+  background: var(--scarlet-fill);
+  border-color: var(--scarlet-fill);
   color: #fff;
 }
 
-.button--ghost {
-  border-color: transparent;
-  background: transparent;
-  color: var(--text-muted);
+.plate .button--primary:hover:not(:disabled) {
+  background: var(--scarlet-fill-hover);
+  border-color: var(--scarlet-fill-hover);
 }
 
-.link-button {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--accent);
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
+/* --- The porcelain plate -------------------------------------------------- */
+
+.plate {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  background: var(--porcelain);
+  color: var(--on-porcelain);
+  border-left: 1px solid var(--rule);
+  padding: 24px 28px 48px;
 }
 
-/* --- Filter --------------------------------------------------------------- */
-
-.filter {
+.plate__header {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--on-porcelain);
 }
 
-.filter__button {
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 999px;
-  padding: 0.3rem 0.85rem;
-  cursor: pointer;
-  color: var(--text-muted);
-}
-
-.filter__button--active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+.plate__id {
+  font-family: var(--mono);
+  font-size: 1.05rem;
   font-weight: 600;
-}
-
-/* --- Table ---------------------------------------------------------------- */
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.table th,
-.table td {
-  text-align: left;
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-
-.table th {
-  font-size: 0.8rem;
-  text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--text-muted);
-  background: #fafbfc;
 }
 
-.table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.table__row--selected {
-  background: var(--accent-soft);
-}
-
-/* --- Badges --------------------------------------------------------------- */
-
-.badge {
+.plate__close {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  border-radius: 999px;
-  padding: 0.15rem 0.6rem;
-  font-size: 0.8rem;
+  gap: 6px;
+  background: none;
+  border: 0;
+  padding: 4px;
+  cursor: pointer;
   font-weight: 600;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  white-space: nowrap;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-porcelain-soft);
 }
 
-.badge--received {
-  background: #eef1f6;
-  color: var(--text-muted);
-}
-.badge--analysing {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.badge--ready_for_review {
-  background: var(--warning-bg);
-  color: var(--warning);
-}
-.badge--failed {
-  background: var(--danger-bg);
-  color: var(--danger);
-}
-.badge--completed {
-  background: var(--success-bg);
-  color: var(--success);
+.plate__close:hover {
+  color: var(--on-porcelain);
 }
 
-.badge--priority-low {
-  color: var(--text-muted);
-}
-.badge--priority-medium {
-  color: var(--accent);
-}
-.badge--priority-high {
-  background: var(--warning-bg);
-  color: var(--warning);
-}
-.badge--priority-urgent {
-  background: var(--danger-bg);
-  color: var(--danger);
+.plate__title {
+  font-size: 1.45rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 18px 0 10px;
+  text-wrap: balance;
 }
 
-/* --- Panel and cards ------------------------------------------------------ */
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  position: sticky;
-  top: 1rem;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
+.plate__status {
+  margin-bottom: 22px;
 }
 
-.panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+.plate .status--received,
+.plate .status--analysing,
+.plate .status--ready_for_review,
+.plate .status--completed,
+.plate .status--failed {
+  color: var(--on-porcelain);
 }
 
-.panel__title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+.plate .status__bar.status__bar--received {
+  background: #6b7690;
+}
+.plate .status__bar--analysing {
+  background: #1e5bff;
+}
+.plate .status__bar--ready_for_review {
+  background: #a06f00;
+}
+.plate .status__bar--failed {
+  background: #c8102e;
+}
+.plate .status__bar--completed {
+  background: #0f7a45;
 }
 
-.panel__title {
-  margin: 0;
-}
-
-.panel__body {
+.plate__body {
   display: grid;
-  gap: 0.85rem;
+  gap: 26px;
 }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.85rem;
+/* Stacked mass with real voids between sections, not uniform gutters. */
+.section__head {
+  font-weight: 600;
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--on-porcelain-soft);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--porcelain-rule);
 }
 
-.card--failure {
-  border-color: #f0b4ae;
-  background: var(--danger-bg);
-}
-
-.card__grid {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.35rem 0.85rem;
+.prose {
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.62;
+  max-width: var(--measure);
   margin: 0;
-}
-
-.card__grid dt {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.card__grid dd {
-  margin: 0;
-}
-
-.card__detail-text {
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
-.card__footnote {
-  margin: 0.6rem 0 0;
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.fields {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 10px 20px;
+  margin: 0;
 }
 
-/* --- Actions -------------------------------------------------------------- */
+.fields dt {
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-porcelain-soft);
+  padding-top: 3px;
+}
+
+.fields dd {
+  margin: 0;
+  max-width: var(--measure);
+  overflow-wrap: anywhere;
+}
+
+.fields dd.prose {
+  font-size: 0.95rem;
+}
+
+.footnote {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-porcelain-soft);
+}
+
+/* A failure is a suspended service: scarlet rule, not a pink box. */
+.failure {
+  border-top: 3px solid #c8102e;
+  padding-top: 14px;
+}
+
+.failure .section__head {
+  color: #c8102e;
+  border-bottom-color: #f0c2c7;
+}
+
+.failure code {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  background: var(--porcelain-tile);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 10px;
 }
 
-/* --- History -------------------------------------------------------------- */
+.actions__none {
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-porcelain-soft);
+  margin: 0;
+}
 
+/* History as a route traversed: each entry a station on the item's own line. */
 .history {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.5rem;
+  gap: 2px;
 }
 
 .history__entry {
-  display: grid;
-  gap: 0.1rem;
-  border-left: 2px solid var(--border);
-  padding-left: 0.6rem;
+  position: relative;
+  padding: 0 0 18px 26px;
+}
+
+.history__entry::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--on-porcelain);
+  background: var(--porcelain);
+}
+
+.history__entry:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 16px;
+  bottom: 0;
+  width: 2px;
+  background: var(--porcelain-rule);
 }
 
 .history__change {
+  display: block;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
-.history__meta,
+.history__meta {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--on-porcelain-soft);
+  margin-top: 2px;
+}
+
 .history__reason {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  display: block;
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  color: var(--on-porcelain-soft);
+  margin-top: 3px;
 }
 
 /* --- States --------------------------------------------------------------- */
 
-.state-block {
+/* An empty corridor is a route with no services on it — not a dashed card,
+   which this world bans anyway. The trunk continues; nothing stops on it. */
+.notice {
+  position: relative;
   display: grid;
-  justify-items: center;
-  gap: 0.5rem;
-  padding: 2rem 1rem;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text-muted);
+  gap: 6px;
+  justify-items: start;
+  max-width: 520px;
+  padding: 26px 0 30px 34px;
+  color: var(--on-enamel-soft);
 }
 
-.state-block__title {
+.notice::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-bright);
+}
+
+/* An open terminus: the line ends here because there is nothing on it. */
+.notice--empty::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 28px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--rule-bright);
+  background: var(--enamel);
+}
+
+/* Ghost rows at the height real rows will occupy, so the queue does not jump
+   when the data lands — FORM's "absence drawn as deliberately as presence". */
+.notice__ghosts {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.notice__ghosts span {
+  display: block;
+  height: 10px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--enamel-raised), transparent);
+}
+
+.notice__ghosts span:nth-child(2) {
+  width: 78%;
+}
+.notice__ghosts span:nth-child(3) {
+  width: 88%;
+}
+.notice__ghosts span:nth-child(4) {
+  width: 64%;
+}
+
+.notice__title {
   margin: 0;
+  font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text);
+  color: var(--on-enamel);
 }
 
-.state-block__hint {
+.notice__hint {
   margin: 0;
   font-size: 0.9rem;
 }
 
-.banner {
+.plate .notice {
+  border-color: var(--porcelain-rule);
+  color: var(--on-porcelain-soft);
+}
+
+.plate .notice__title {
+  color: var(--on-porcelain);
+}
+
+.alert {
+  border-top: 3px solid var(--ink-failed);
+  padding: 14px 0 0;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  border-radius: var(--radius);
-  padding: 0.85rem;
-  margin: 1rem 0;
+  gap: 16px;
+  margin: 18px 0;
 }
 
-.banner--error {
-  background: var(--danger-bg);
-  border: 1px solid #f0b4ae;
-  color: var(--danger);
-}
-
-.banner__title {
+.alert__title {
   margin: 0;
   font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-failed);
 }
 
-.banner__detail {
-  margin: 0.2rem 0 0;
-  font-size: 0.9rem;
+.alert__detail {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  max-width: var(--measure);
+}
+
+.plate .alert {
+  border-top-color: #c8102e;
+}
+
+.plate .alert__title {
+  color: #c8102e;
 }
 
 .refreshing {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--on-enamel-soft);
 }
 
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-.pagination__summary {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-/* --- Spinner and toasts --------------------------------------------------- */
-
-.spinner {
+/* The working indicator is a service in motion, not a spinning circle. */
+.progress {
   display: inline-block;
-  width: 1em;
-  height: 1em;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  vertical-align: -0.15em;
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rule-bright);
+  position: relative;
+  overflow: hidden;
 }
 
-.spinner--inline {
-  width: 0.7em;
-  height: 0.7em;
+.progress::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  border-radius: 2px;
+  background: currentcolor;
+  animation: run 1.1s var(--ease) infinite;
 }
 
-@keyframes spin {
+@keyframes run {
+  from {
+    transform: translateX(-100%);
+  }
   to {
-    transform: rotate(360deg);
+    transform: translateX(250%);
+  }
+}
+
+.plate .progress {
+  background: var(--porcelain-rule);
+}
+
+/* --- Toasts --------------------------------------------------------------- */
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* A top rule, matching .alert and .failure, rather than a side accent bar. */
+.toast {
+  background: var(--porcelain);
+  color: var(--on-porcelain);
+  border-top: 3px solid var(--on-porcelain);
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  max-width: 380px;
+  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 70%);
+  animation: toast-in 0.34s var(--ease) both;
+}
+
+.toast--error {
+  border-top-color: #c8102e;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+}
+
+/* --- Responsive: focus the corridor, never shrink the whole network ------- */
+
+@media (max-width: 1080px) {
+  .main--split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .plate {
+    position: static;
+    max-height: none;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+}
+
+@media (max-width: 760px) {
+  .masthead,
+  .band,
+  .queue {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  /* Baseline-aligned on one line the strap wrapped and centred itself. */
+  .masthead__mark {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .plate {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  /* The network becomes a vertical corridor rather than a squeezed line. */
+  .band__route {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .band__route::before {
+    top: 14px;
+    bottom: 14px;
+    left: 13px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  .station {
+    grid-template-columns: 28px auto 1fr;
+    align-items: center;
+    justify-items: start;
+    gap: 12px;
+    padding: 7px 0;
+    text-align: left;
+  }
+
+  .station__count {
+    font-size: 1rem;
+    justify-self: end;
+  }
+
+  /* In the vertical corridor the branch leaves the trunk in normal flow,
+     directly beneath the station it belongs to. */
+  .band__cell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .band__branch {
+    position: static;
+    padding-left: 13px;
+  }
+
+  .services caption,
+  .services th {
+    font-size: 0.6rem;
+  }
+
+  .services th,
+  .services td {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .services th:first-child,
+  .services td:first-child {
+    padding-left: 0;
+  }
+
+  .service__subject {
+    max-width: none;
+  }
+
+  .services td {
+    font-size: 0.88rem;
+  }
+
+  /* 390px is the budget: the status label wraps rather than forcing the
+     table wider than the viewport, which is the defect this replaces. */
+  .service__cell-status {
+    width: 92px;
+  }
+
+  .status {
+    white-space: normal;
+    letter-spacing: 0.04em;
+    font-size: 0.65rem;
+    align-items: flex-start;
+  }
+
+  .status__bar {
+    margin-top: 5px;
+  }
+
+  .service__id,
+  .priority {
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spinner {
-    animation-duration: 2s;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
-}
 
-.toast-stack {
-  position: fixed;
-  right: 1rem;
-  bottom: 1rem;
-  display: grid;
-  gap: 0.5rem;
-  z-index: 10;
-}
-
-.toast {
-  background: var(--text);
-  color: #fff;
-  border-radius: var(--radius);
-  padding: 0.6rem 0.9rem;
-  font-size: 0.9rem;
-  max-width: 360px;
-}
-
-.toast--error {
-  background: var(--danger);
+  /* The working indicator must still read as "working". */
+  .progress::after {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
+  }
 }

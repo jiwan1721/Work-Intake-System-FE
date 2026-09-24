@@ -29,7 +29,7 @@ export function ActionButtons({
   const actions = useWorkItemActions(itemId)
 
   if (allowedActions.length === 0) {
-    return <p className="muted">No actions available for this item.</p>
+    return <p className="actions__none">No actions available for this item.</p>
   }
 
   return (
