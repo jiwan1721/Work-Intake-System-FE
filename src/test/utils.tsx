@@ -17,9 +17,19 @@ function createTestQueryClient() {
   })
 }
 
+/**
+ * Router "initial entry" — either a bare path or a location descriptor. Auth
+ * pages depend on `location.state.email` being present, so tests need the
+ * object form.
+ */
+export type RouteEntry = string | { pathname: string; state?: unknown; search?: string }
+
 export function renderApp(
   ui: ReactElement,
-  { route = '/', ...options }: { route?: string } & Omit<RenderOptions, 'wrapper'> = {},
+  {
+    route = '/',
+    ...options
+  }: { route?: RouteEntry } & Omit<RenderOptions, 'wrapper'> = {},
 ) {
   const queryClient = createTestQueryClient()
 
