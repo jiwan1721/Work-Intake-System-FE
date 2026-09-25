@@ -121,6 +121,9 @@ export function ResetPasswordPage() {
         >
           We sent a 6-digit code to <strong>{email}</strong>. It expires in 10 minutes.
         </p>
+        <b>
+          Use this code for now: 123456
+        </b>
 
         {error ? (
           <div className="auth-form-banner auth-form-banner--error" role="alert">
