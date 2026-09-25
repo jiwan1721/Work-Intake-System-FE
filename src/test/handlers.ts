@@ -14,7 +14,7 @@ export const handlers = [
   // Satisfies the AuthProvider hydration call when tests pre-seed tokens.
   http.get('/api/v1/auth/me/', () =>
     HttpResponse.json({
-      id: 'test-user-id',
+      id: 1,
       email: 'operator@example.com',
       firstName: 'Test',
       lastName: 'Operator',

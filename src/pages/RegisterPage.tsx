@@ -69,8 +69,12 @@ export function RegisterPage() {
 
     setIsPending(true)
     try {
-      await register({ firstName, lastName, email, password, confirmPassword })
-      void navigate('/', { replace: true })
+      const response = await register({ firstName, lastName, email, password, confirmPassword })
+      // Flow 1 step 1 → step 2. Email travels via router state, not the URL,
+      // so it can't be shared or bookmarked (matches the API brief).
+      void navigate('/verify-email', {
+        state: { email: response.email, justRegistered: true },
+      })
     } catch (err) {
       if (err instanceof ApiError && err.status === 400) {
         const details = err.details as Record<string, string[]>

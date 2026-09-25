@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 import { authApi } from '../api/auth'
 import { ApiError } from '../api/client'
-import { OtpInput } from '../components/auth/OtpInput'
 import { useToast } from '../components/feedback/toastContext'
+import { useAuth } from '../contexts/authContextDef'
 
 const EyeIcon = (
   <svg
@@ -40,46 +40,46 @@ const EyeOffIcon = (
   </svg>
 )
 
-export function ResetPasswordPage() {
-  const location = useLocation()
+export function ChangePasswordPage() {
+  const { logout } = useAuth()
   const navigate = useNavigate()
   const { showToast } = useToast()
-  const email = (location.state as { email?: string } | null)?.email
 
-  const [otp, setOtp] = useState('')
-  const [password, setPassword] = useState('')
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
   const [isPending, setIsPending] = useState(false)
 
-  // If someone lands here without going through Forgot Password, bounce them
-  // back — the email is required and only lives in router state.
-  if (!email) {
-    return <Navigate to="/forgot-password" replace />
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     const errors: Record<string, string> = {}
-    if (otp.length !== 6) errors['otp'] = 'Enter the 6-digit code from your email.'
-    if (password.length < 8) errors['password'] = 'Password must be at least 8 characters.'
-    if (password !== confirmPassword) errors['confirmPassword'] = 'Passwords do not match.'
+    if (!oldPassword) errors['oldPassword'] = 'Current password is required.'
+    if (newPassword.length < 8) errors['newPassword'] = 'Password must be at least 8 characters.'
+    if (newPassword !== confirmPassword)
+      errors['confirmPassword'] = 'Passwords do not match.'
     setFieldErrors(errors)
     if (Object.keys(errors).length > 0) return
 
     setIsPending(true)
     try {
-      await authApi.resetPassword(email, otp, password, confirmPassword)
-      showToast('Password reset successfully. Please sign in.', 'info')
-      void navigate('/login', { replace: true })
+      await authApi.changePassword(oldPassword, newPassword, confirmPassword)
+      // Spec Flow 5: the backend rotates credentials, so we sign the user out
+      // and send them back to /login with a toast.
+      showToast('Password changed. Please sign in with your new password.', 'info')
+      logout()
     } catch (err) {
       if (err instanceof ApiError && err.status === 400) {
         const details = err.details as Record<string, string[]>
+        const snakeToCamel: Record<string, string> = {
+          old_password: 'oldPassword',
+          new_password: 'newPassword',
+          confirm_password: 'confirmPassword',
+        }
         const mapped: Record<string, string> = {}
-        const snakeToCamel: Record<string, string> = { confirm_password: 'confirmPassword' }
         for (const [key, msgs] of Object.entries(details)) {
           if (!Array.isArray(msgs)) continue
           const field = snakeToCamel[key] ?? key
@@ -94,7 +94,7 @@ export function ResetPasswordPage() {
         setError(
           err instanceof ApiError
             ? err.message
-            : 'Unable to reset password. Check your connection.',
+            : 'Unable to change password. Check your connection.',
         )
       }
     } finally {
@@ -110,7 +110,7 @@ export function ResetPasswordPage() {
           <h1 className="auth-brand__name">TriageDesk</h1>
         </div>
 
-        <h2 className="auth-heading">Set a new password</h2>
+        <h2 className="auth-heading">Change your password</h2>
         <p
           style={{
             fontSize: '0.875rem',
@@ -119,7 +119,7 @@ export function ResetPasswordPage() {
             marginBottom: '1.25rem',
           }}
         >
-          We sent a 6-digit code to <strong>{email}</strong>. It expires in 10 minutes.
+          After changing your password you&apos;ll need to sign in again.
         </p>
 
         {error ? (
@@ -130,38 +130,20 @@ export function ResetPasswordPage() {
 
         <form onSubmit={(e) => void handleSubmit(e)} noValidate>
           <div className="form-field">
-            <label className="form-label" htmlFor="reset-otp-0">
-              Reset code
-            </label>
-            <OtpInput
-              value={otp}
-              onChange={(next) => {
-                setOtp(next)
-                setFieldErrors((f) => (f['otp'] ? { ...f, otp: '' } : f))
-              }}
-              idPrefix="reset-otp"
-              invalid={!!fieldErrors['otp']}
-              autoFocus
-            />
-            {fieldErrors['otp'] ? (
-              <span className="form-error">{fieldErrors['otp']}</span>
-            ) : null}
-          </div>
-
-          <div className="form-field">
-            <label className="form-label" htmlFor="new-password">
-              New password
+            <label className="form-label" htmlFor="old-password">
+              Current password
             </label>
             <div className="input-wrapper">
               <input
-                id="new-password"
+                id="old-password"
                 type={showPassword ? 'text' : 'password'}
-                className={`form-input${fieldErrors['password'] ? ' form-input--error' : ''}`}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
+                className={`form-input${fieldErrors['oldPassword'] ? ' form-input--error' : ''}`}
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="••••••••"
                 required
-                autoComplete="new-password"
+                autoComplete="current-password"
+                autoFocus
               />
               <button
                 type="button"
@@ -172,8 +154,27 @@ export function ResetPasswordPage() {
                 {showPassword ? EyeOffIcon : EyeIcon}
               </button>
             </div>
-            {fieldErrors['password'] ? (
-              <span className="form-error">{fieldErrors['password']}</span>
+            {fieldErrors['oldPassword'] ? (
+              <span className="form-error">{fieldErrors['oldPassword']}</span>
+            ) : null}
+          </div>
+
+          <div className="form-field">
+            <label className="form-label" htmlFor="new-password">
+              New password
+            </label>
+            <input
+              id="new-password"
+              type={showPassword ? 'text' : 'password'}
+              className={`form-input${fieldErrors['newPassword'] ? ' form-input--error' : ''}`}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="At least 8 characters"
+              required
+              autoComplete="new-password"
+            />
+            {fieldErrors['newPassword'] ? (
+              <span className="form-error">{fieldErrors['newPassword']}</span>
             ) : null}
           </div>
 
@@ -196,26 +197,35 @@ export function ResetPasswordPage() {
             ) : null}
           </div>
 
-          <div className="form-actions">
+          <div className="form-actions" style={{ display: 'flex', gap: '0.75rem' }}>
+            <button
+              type="button"
+              className="button"
+              onClick={() => void navigate(-1)}
+              disabled={isPending}
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              className="button button--primary button--full"
+              className="button button--primary"
+              style={{ flex: 1, justifyContent: 'center' }}
               disabled={isPending}
             >
               {isPending ? (
                 <>
                   <span className="spinner spinner--inline" aria-hidden="true" />
-                  Resetting…
+                  Saving…
                 </>
               ) : (
-                'Reset password'
+                'Change password'
               )}
             </button>
           </div>
         </form>
 
         <p className="auth-alt">
-          Didn&apos;t get a code? <Link to="/forgot-password">Request a new one</Link>
+          <Link to="/">Back to workbench</Link>
         </p>
       </div>
     </div>

@@ -115,7 +115,7 @@ export function isWorkItemStatus(value: string): value is WorkItemStatus {
 // --- Auth types -------------------------------------------------------------
 
 export interface AuthUser {
-  id: string
+  id: number
   email: string
   firstName: string
   lastName: string
@@ -124,7 +124,7 @@ export interface AuthUser {
   dateJoined: string
 }
 
-export interface LoginResponse {
+export interface AuthTokens {
   access: string
   refresh: string
   user: AuthUser
@@ -136,4 +136,13 @@ export interface RegisterRequest {
   email: string
   password: string
   confirmPassword: string
+}
+
+export interface RegisterResponse {
+  message: string
+  email: string
+}
+
+export interface MessageResponse {
+  message: string
 }

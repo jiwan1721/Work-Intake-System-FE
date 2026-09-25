@@ -53,10 +53,22 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   )
 }
 
+/**
+ * simplejwt (and the auth login endpoint) do not use the standard envelope on
+ * 401. They return `{ "detail": "...", "code": "..." }`. Detect that shape so
+ * the UI can react to the real message instead of a generic UNKNOWN.
+ */
+function isDetailErrorBody(value: unknown): value is { detail: string; code?: string } {
+  if (typeof value !== 'object' || value === null || !('detail' in value)) return false
+  return typeof value.detail === 'string'
+}
+
 // These paths never require a token and must not trigger a 401 retry loop.
 const NO_AUTH_PATHS = new Set([
   '/auth/login/',
   '/auth/register/',
+  '/auth/verify-email/',
+  '/auth/resend-otp/',
   '/auth/refresh/',
   '/auth/forgot-password/',
   '/auth/reset-password/',
@@ -141,6 +153,9 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     if (isApiErrorBody(body)) {
       throw new ApiError(response.status, body.error.code, body.error.message, body.error.details)
+    }
+    if (isDetailErrorBody(body)) {
+      throw new ApiError(response.status, body.code ?? 'AUTH_FAILED', body.detail, {})
     }
     // A proxy or crash produced something that is not our envelope.
     throw new ApiError(

@@ -3,10 +3,12 @@ import { Route, Routes } from 'react-router'
 import { AuthGuard } from './components/auth/AuthGuard'
 import { ToastProvider } from './components/feedback/ToastProvider'
 import { AuthProvider } from './contexts/AuthContext'
+import { ChangePasswordPage } from './pages/ChangePasswordPage'
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { ResetPasswordPage } from './pages/ResetPasswordPage'
+import { VerifyEmailPage } from './pages/VerifyEmailPage'
 import { WorkItemsPage } from './pages/WorkItemsPage'
 
 export default function App() {
@@ -17,8 +19,9 @@ export default function App() {
           {/* Public auth routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Protected routes — AuthGuard redirects to /login if not authenticated */}
           <Route
@@ -34,6 +37,14 @@ export default function App() {
             element={
               <AuthGuard>
                 <WorkItemsPage />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/account/password"
+            element={
+              <AuthGuard>
+                <ChangePasswordPage />
               </AuthGuard>
             }
           />

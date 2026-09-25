@@ -38,6 +38,13 @@ const EyeOffIcon = (
   </svg>
 )
 
+// The backend returns a plain-text `detail` for 401s (Flow 2). Matching the
+// message is the only way to distinguish "inactive" from "wrong password" —
+// the code isn't specified — and it's what triggers the resend-OTP link.
+function isInactiveAccountError(err: ApiError): boolean {
+  return err.status === 401 && /inactive|verify your email/i.test(err.message)
+}
+
 export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -48,19 +55,24 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [needsVerification, setNeedsVerification] = useState(false)
   const [isPending, setIsPending] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setNeedsVerification(false)
     setIsPending(true)
     try {
       await login(email, password)
       void navigate(from, { replace: true })
     } catch (err) {
-      setError(
-        err instanceof ApiError ? err.message : 'Unable to sign in. Check your connection.',
-      )
+      if (err instanceof ApiError) {
+        setError(err.message)
+        if (isInactiveAccountError(err)) setNeedsVerification(true)
+      } else {
+        setError('Unable to sign in. Check your connection.')
+      }
     } finally {
       setIsPending(false)
     }
@@ -80,6 +92,18 @@ export function LoginPage() {
         {error ? (
           <div className="auth-form-banner auth-form-banner--error" role="alert">
             {error}
+            {needsVerification ? (
+              <>
+                {' '}
+                <Link
+                  to="/verify-email"
+                  state={{ email }}
+                  className="auth-forgot-link"
+                >
+                  Resend verification code
+                </Link>
+              </>
+            ) : null}
           </div>
         ) : null}
 
@@ -151,8 +175,7 @@ export function LoginPage() {
         </form>
 
         <p className="auth-alt">
-          Don&apos;t have an account?{' '}
-          <Link to="/register">Create one</Link>
+          Don&apos;t have an account? <Link to="/register">Create one</Link>
         </p>
       </div>
     </div>

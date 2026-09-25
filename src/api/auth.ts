@@ -1,15 +1,21 @@
 import { request } from './client'
-import type { AuthUser, LoginResponse, RegisterRequest } from './types'
+import type {
+  AuthTokens,
+  AuthUser,
+  MessageResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from './types'
 
 export const authApi = {
   login: (email: string, password: string) =>
-    request<LoginResponse>('/auth/login/', {
+    request<AuthTokens>('/auth/login/', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
 
   register: (data: RegisterRequest) =>
-    request<LoginResponse>('/auth/register/', {
+    request<RegisterResponse>('/auth/register/', {
       method: 'POST',
       body: JSON.stringify({
         first_name: data.firstName,
@@ -20,22 +26,39 @@ export const authApi = {
       }),
     }),
 
-  me: () => request<AuthUser>('/auth/me/'),
+  verifyEmail: (email: string, otp: string) =>
+    request<AuthTokens>('/auth/verify-email/', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp }),
+    }),
 
-  forgotPassword: (email: string) =>
-    request<{ message: string }>('/auth/forgot-password/', {
+  resendOtp: (email: string) =>
+    request<MessageResponse>('/auth/resend-otp/', {
       method: 'POST',
       body: JSON.stringify({ email }),
     }),
 
-  resetPassword: (uid: string, token: string, password: string, confirmPassword: string) =>
-    request<{ message: string }>('/auth/reset-password/', {
+  me: () => request<AuthUser>('/auth/me/'),
+
+  forgotPassword: (email: string) =>
+    request<MessageResponse>('/auth/forgot-password/', {
       method: 'POST',
-      body: JSON.stringify({ uid, token, password, confirm_password: confirmPassword }),
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (email: string, otp: string, password: string, confirmPassword: string) =>
+    request<MessageResponse>('/auth/reset-password/', {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        otp,
+        password,
+        confirm_password: confirmPassword,
+      }),
     }),
 
   changePassword: (oldPassword: string, newPassword: string, confirmPassword: string) =>
-    request<{ message: string }>('/auth/change-password/', {
+    request<MessageResponse>('/auth/change-password/', {
       method: 'POST',
       body: JSON.stringify({
         old_password: oldPassword,

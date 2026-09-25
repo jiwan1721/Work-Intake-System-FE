@@ -46,10 +46,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user)
   }, [])
 
-  const register = useCallback(async (data: RegisterRequest) => {
-    const response = await authApi.register(data)
-    setTokens(response.access, response.refresh)
-    setUser(response.user)
+  // Registration only creates the account; the OTP verification step is what
+  // returns tokens (Flow 1, step 2). The page uses the returned email to
+  // navigate to /verify-email.
+  const register = useCallback((data: RegisterRequest) => authApi.register(data), [])
+
+  const verifyEmail = useCallback(async (email: string, otp: string) => {
+    const data = await authApi.verifyEmail(email, otp)
+    setTokens(data.access, data.refresh)
+    setUser(data.user)
   }, [])
 
   const value = useMemo(
@@ -59,9 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
       login,
       register,
+      verifyEmail,
       logout,
     }),
-    [user, isLoading, login, register, logout],
+    [user, isLoading, login, register, verifyEmail, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

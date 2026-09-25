@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 
 import { isWorkItemStatus, type WorkItemStatus } from '../api/types'
 import { Pagination } from '../components/Pagination'
@@ -57,6 +57,9 @@ export function WorkItemsPage() {
               {user.fullName}
             </span>
           ) : null}
+          <Link className="button" to="/account/password">
+            Change password
+          </Link>
           <button className="button" type="button" onClick={logout}>
             Sign out
           </button>
