@@ -11,4 +11,16 @@ export const handlers = [
   http.get('/api/v1/work-items', () =>
     HttpResponse.json({ count: 0, page: 1, pageSize: 20, results: [] }),
   ),
+  // Satisfies the AuthProvider hydration call when tests pre-seed tokens.
+  http.get('/api/v1/auth/me/', () =>
+    HttpResponse.json({
+      id: 'test-user-id',
+      email: 'operator@example.com',
+      firstName: 'Test',
+      lastName: 'Operator',
+      fullName: 'Test Operator',
+      isActive: true,
+      dateJoined: '2026-01-01T00:00:00Z',
+    }),
+  ),
 ]

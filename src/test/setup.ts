@@ -14,6 +14,8 @@ beforeAll(() => {
 afterEach(() => {
   cleanup()
   server.resetHandlers()
+  // Prevent auth token leakage between tests.
+  localStorage.clear()
 })
 
 afterAll(() => {

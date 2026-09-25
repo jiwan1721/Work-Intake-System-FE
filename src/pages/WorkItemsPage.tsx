@@ -7,6 +7,7 @@ import { WorkItemDetail } from '../components/WorkItemDetail'
 import { WorkItemTable } from '../components/WorkItemTable'
 import { EmptyState, ErrorBanner, LoadingBlock, Spinner } from '../components/feedback/Feedback'
 import { statusLabel } from '../components/statusLabels'
+import { useAuth } from '../contexts/authContextDef'
 import { useWorkItems } from '../hooks/useWorkItems'
 
 /**
@@ -16,6 +17,7 @@ import { useWorkItems } from '../hooks/useWorkItems'
  */
 export function WorkItemsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const { user, logout } = useAuth()
 
   const statusParam = searchParams.get('status')
   const status: WorkItemStatus | undefined =
@@ -42,13 +44,23 @@ export function WorkItemsPage() {
           <h1>TriageDesk</h1>
           <p className="muted">AI-assisted work intake</p>
         </div>
-        {/* A background refetch should be visible but must not replace the
-            table the operator is reading. */}
-        {query.isFetching && !query.isPending ? (
-          <span className="refreshing">
-            <Spinner label="" /> Refreshing…
-          </span>
-        ) : null}
+        <div className="page__header-right">
+          {/* A background refetch should be visible but must not replace the
+              table the operator is reading. */}
+          {query.isFetching && !query.isPending ? (
+            <span className="refreshing">
+              <Spinner label="" /> Refreshing…
+            </span>
+          ) : null}
+          {user ? (
+            <span className="page__user muted" aria-label={`Signed in as ${user.fullName}`}>
+              {user.fullName}
+            </span>
+          ) : null}
+          <button className="button" type="button" onClick={logout}>
+            Sign out
+          </button>
+        </div>
       </header>
 
       <StatusFilter

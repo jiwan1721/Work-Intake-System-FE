@@ -3,6 +3,7 @@ import { render, type RenderOptions } from '@testing-library/react'
 import type { ReactElement, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
 
+import { AuthProvider } from '../contexts/AuthContext'
 import { ToastProvider } from '../components/feedback/ToastProvider'
 import type { Paginated, WorkItem, WorkItemDetail } from '../api/types'
 
@@ -26,7 +27,9 @@ export function renderApp(
     return (
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={[route]}>
-          <ToastProvider>{children}</ToastProvider>
+          <AuthProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </AuthProvider>
         </MemoryRouter>
       </QueryClientProvider>
     )

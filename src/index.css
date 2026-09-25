@@ -499,3 +499,236 @@ button:disabled {
 .toast--error {
   background: var(--danger);
 }
+
+/* --- Auth pages ------------------------------------------------------------ */
+
+.auth-layout {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.auth-brand {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.auth-brand__name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.025em;
+}
+
+.auth-brand__tagline {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.auth-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 1.25rem;
+}
+
+.auth-form-banner {
+  border-radius: var(--radius);
+  padding: 0.7rem 0.875rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.auth-form-banner--error {
+  background: var(--danger-bg);
+  border: 1px solid #f0b4ae;
+  color: var(--danger);
+}
+
+.auth-form-banner--success {
+  background: var(--success-bg);
+  border: 1px solid #a8d5bb;
+  color: var(--success);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.form-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.form-input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9375rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5625rem 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 91, 215, 0.12);
+}
+
+.form-input--error {
+  border-color: var(--danger);
+}
+
+.form-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.12);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.55;
+}
+
+.form-error {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--danger);
+  margin-top: 0.3rem;
+}
+
+.form-actions {
+  margin-top: 1.25rem;
+}
+
+.button--full {
+  width: 100%;
+  justify-content: center;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.auth-forgot-link {
+  font-size: 0.825rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.auth-alt {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+.auth-alt a {
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.auth-alt a:hover {
+  text-decoration: underline;
+}
+
+/* Password visibility toggle */
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper .form-input {
+  padding-right: 2.5rem;
+}
+
+.input-toggle {
+  position: absolute;
+  right: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 0;
+  border-radius: 4px;
+  opacity: 0.55;
+}
+
+.input-toggle:hover {
+  opacity: 0.9;
+  color: var(--text);
+}
+
+/* Header right-side cluster (refresh indicator + user + logout) */
+
+.page__header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.page__user {
+  font-size: 0.875rem;
+}

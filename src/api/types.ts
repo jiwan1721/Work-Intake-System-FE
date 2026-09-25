@@ -111,3 +111,29 @@ export interface ApiErrorBody {
 export function isWorkItemStatus(value: string): value is WorkItemStatus {
   return (WORK_ITEM_STATUSES as readonly string[]).includes(value)
 }
+
+// --- Auth types -------------------------------------------------------------
+
+export interface AuthUser {
+  id: string
+  email: string
+  firstName: string
+  lastName: string
+  fullName: string
+  isActive: boolean
+  dateJoined: string
+}
+
+export interface LoginResponse {
+  access: string
+  refresh: string
+  user: AuthUser
+}
+
+export interface RegisterRequest {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  confirmPassword: string
+}
