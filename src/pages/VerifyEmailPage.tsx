@@ -118,6 +118,9 @@ export function VerifyEmailPage() {
           }}
         >
           Enter the 6-digit code we sent to <strong>{email}</strong>. Codes expire in 10 minutes.
+          <br />
+          <br />
+          Use this code 123456 for now
         </p>
 
         {banner ? (
