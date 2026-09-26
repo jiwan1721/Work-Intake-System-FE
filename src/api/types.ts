@@ -39,8 +39,8 @@ export interface Analysis {
   category: Category
   priority: Priority
   summary: string
-  recommendedAction: string
-  analysedAt: string
+  recommended_action: string
+  analysed_at: string
   model: string | null
 }
 
@@ -51,39 +51,39 @@ export interface WorkItemError {
 
 export interface WorkItem {
   id: string
-  externalId: string
+  external_id: string
   title: string
   description: string
   status: WorkItemStatus
   /** Null until a valid analysis exists — never a half-filled object. */
   analysis: Analysis | null
-  lastError: WorkItemError | null
-  attemptCount: number
-  allowedActions: WorkItemAction[]
+  last_error: WorkItemError | null
+  attempt_count: number
+  allowed_actions: WorkItemAction[]
   version: number
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }
 
 export interface AnalysisAttempt {
-  attemptNo: number
+  attempt_no: number
   outcome: 'SUCCEEDED' | 'FAILED'
   provider: string
   model: string
-  promptVersion: string
-  errorCode: string | null
-  errorMessage: string | null
-  latencyMs: number | null
-  startedAt: string
-  finishedAt: string | null
+  prompt_version: string
+  error_code: string | null
+  error_message: string | null
+  latency_ms: number | null
+  started_at: string
+  finished_at: string | null
 }
 
 export interface StatusTransition {
-  fromStatus: WorkItemStatus
-  toStatus: WorkItemStatus
+  from_status: WorkItemStatus
+  to_status: WorkItemStatus
   actor: 'system' | 'operator'
   reason: string
-  createdAt: string
+  created_at: string
 }
 
 export interface WorkItemDetail extends WorkItem {
@@ -110,4 +110,45 @@ export interface ApiErrorBody {
 
 export function isWorkItemStatus(value: string): value is WorkItemStatus {
   return (WORK_ITEM_STATUSES as readonly string[]).includes(value)
+}
+
+export interface CreateWorkItemRequest {
+  external_id: string
+  title: string
+  description: string
+}
+
+// --- Auth types -------------------------------------------------------------
+
+export interface AuthUser {
+  id: number
+  email: string
+  firstName: string
+  lastName: string
+  fullName: string
+  isActive: boolean
+  dateJoined: string
+}
+
+export interface AuthTokens {
+  access: string
+  refresh: string
+  user: AuthUser
+}
+
+export interface RegisterRequest {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  confirmPassword: string
+}
+
+export interface RegisterResponse {
+  message: string
+  email: string
+}
+
+export interface MessageResponse {
+  message: string
 }

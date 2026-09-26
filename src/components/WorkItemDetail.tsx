@@ -12,7 +12,7 @@ export function WorkItemDetail({ id, onClose }: { id: string; onClose: () => voi
   return (
     <aside className="panel" aria-label="Work item detail">
       <div className="panel__header">
-        <h2>{item ? item.externalId : 'Work item'}</h2>
+        <h2>{item ? item.external_id : 'Work item'}</h2>
         <button type="button" className="button button--ghost" onClick={onClose}>
           Close
         </button>
@@ -36,17 +36,17 @@ export function WorkItemDetail({ id, onClose }: { id: string; onClose: () => voi
 
           {item.analysis ? <AnalysisCard analysis={item.analysis} /> : null}
 
-          {item.status === 'FAILED' && item.lastError ? (
+          {item.status === 'FAILED' && item.last_error ? (
             <FailureCard
-              error={item.lastError}
-              attemptCount={item.attemptCount}
-              canRetry={item.allowedActions.includes('retry')}
+              error={item.last_error}
+              attemptCount={item.attempt_count}
+              canRetry={item.allowed_actions.includes('retry')}
             />
           ) : null}
 
           {item.status === 'ANALYSING' ? <LoadingBlock label="Analysis in progress…" /> : null}
 
-          <ActionButtons itemId={item.id} allowedActions={item.allowedActions} />
+          <ActionButtons itemId={item.id} allowedActions={item.allowed_actions} />
 
           <TransitionHistory transitions={item.transitions} />
         </div>

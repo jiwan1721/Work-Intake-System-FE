@@ -15,12 +15,12 @@ export function TransitionHistory({ transitions }: { transitions: StatusTransiti
       <h3 id="history-heading">History</h3>
       <ol className="history">
         {transitions.map((transition) => (
-          <li key={`${transition.createdAt}-${transition.toStatus}`} className="history__entry">
+          <li key={`${transition.created_at}-${transition.to_status}`} className="history__entry">
             <span className="history__change">
-              {statusLabel(transition.fromStatus)} → {statusLabel(transition.toStatus)}
+              {statusLabel(transition.from_status)} → {statusLabel(transition.to_status)}
             </span>
             <span className="history__meta">
-              {transition.actor} · {new Date(transition.createdAt).toLocaleString()}
+              {transition.actor} · {new Date(transition.created_at).toLocaleString()}
             </span>
             {transition.reason ? (
               <span className="history__reason">{transition.reason}</span>

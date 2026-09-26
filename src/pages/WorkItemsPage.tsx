@@ -1,12 +1,15 @@
-import { useSearchParams } from 'react-router'
+import { useState } from 'react'
+import { Link, useSearchParams } from 'react-router'
 
 import { isWorkItemStatus, type WorkItemStatus } from '../api/types'
+import { NewWorkItemForm } from '../components/NewWorkItemForm'
 import { Pagination } from '../components/Pagination'
 import { StatusFilter } from '../components/StatusFilter'
 import { WorkItemDetail } from '../components/WorkItemDetail'
 import { WorkItemTable } from '../components/WorkItemTable'
 import { EmptyState, ErrorBanner, LoadingBlock, Spinner } from '../components/feedback/Feedback'
 import { statusLabel } from '../components/statusLabels'
+import { useAuth } from '../contexts/authContextDef'
 import { useWorkItems } from '../hooks/useWorkItems'
 
 /**
@@ -16,6 +19,7 @@ import { useWorkItems } from '../hooks/useWorkItems'
  */
 export function WorkItemsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const { user, logout } = useAuth()
 
   const statusParam = searchParams.get('status')
   const status: WorkItemStatus | undefined =
@@ -23,6 +27,8 @@ export function WorkItemsPage() {
 
   const page = Math.max(Number(searchParams.get('page') ?? '1') || 1, 1)
   const selectedId = searchParams.get('item') ?? undefined
+
+  const [isCreating, setIsCreating] = useState(false)
 
   const query = useWorkItems({ status, page })
 
@@ -42,14 +48,48 @@ export function WorkItemsPage() {
           <h1>TriageDesk</h1>
           <p className="muted">AI-assisted work intake</p>
         </div>
-        {/* A background refetch should be visible but must not replace the
-            table the operator is reading. */}
-        {query.isFetching && !query.isPending ? (
-          <span className="refreshing">
-            <Spinner label="" /> Refreshing…
-          </span>
-        ) : null}
+        <div className="page__header-right">
+          {/* A background refetch should be visible but must not replace the
+              table the operator is reading. */}
+          {query.isFetching && !query.isPending ? (
+            <span className="refreshing">
+              <Spinner label="" /> Refreshing…
+            </span>
+          ) : null}
+          {user ? (
+            <span className="page__user muted" aria-label={`Signed in as ${user.fullName}`}>
+              {user.fullName}
+            </span>
+          ) : null}
+          <Link className="button" to="/account/password">
+            Change password
+          </Link>
+          <button className="button" type="button" onClick={logout}>
+            Sign out
+          </button>
+          <button
+            type="button"
+            className={isCreating ? 'button' : 'button button--primary'}
+            onClick={() => setIsCreating((open) => !open)}
+            aria-expanded={isCreating}
+            aria-controls="intake-panel"
+          >
+            {isCreating ? 'Cancel' : 'New item'}
+          </button>
+        </div>
       </header>
+
+      {isCreating ? (
+        <div id="intake-panel">
+          <NewWorkItemForm
+            onCancel={() => setIsCreating(false)}
+            onCreated={(id) => {
+              setIsCreating(false)
+              update({ item: id, page: undefined })
+            }}
+          />
+        </div>
+      ) : null}
 
       <StatusFilter
         value={status}

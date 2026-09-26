@@ -1,4 +1,11 @@
 import type { ApiErrorBody } from './types'
+import {
+  clearTokens,
+  getAccessToken,
+  getRefreshToken,
+  notifySessionExpired,
+  setTokens,
+} from './tokens'
 
 /**
  * The single place the API version appears (PLAN §9). Everything else asks
@@ -7,7 +14,9 @@ import type { ApiErrorBody } from './types'
  * The default is relative, which means the browser talks to its own origin
  * and Vite proxies /api to the backend — no CORS configuration to get wrong.
  */
-export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
+// An empty string (e.g. from a cleared env var in the test profile) falls
+// through to the relative default, which the Vite proxy and MSW both match.
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1'
 
 /**
  * The server answered, and said no. Carries the envelope's code so the UI can
@@ -44,18 +53,95 @@ function isApiErrorBody(value: unknown): value is ApiErrorBody {
   )
 }
 
-export async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  let response: Response
+/**
+ * simplejwt (and the auth login endpoint) do not use the standard envelope on
+ * 401. They return `{ "detail": "...", "code": "..." }`. Detect that shape so
+ * the UI can react to the real message instead of a generic UNKNOWN.
+ */
+function isDetailErrorBody(value: unknown): value is { detail: string; code?: string } {
+  if (typeof value !== 'object' || value === null || !('detail' in value)) return false
+  return typeof value.detail === 'string'
+}
+
+// These paths never require a token and must not trigger a 401 retry loop.
+const NO_AUTH_PATHS = new Set([
+  '/auth/login/',
+  '/auth/register/',
+  '/auth/verify-email/',
+  '/auth/resend-otp/',
+  '/auth/refresh/',
+  '/auth/forgot-password/',
+  '/auth/reset-password/',
+])
+
+// Shared refresh promise: concurrent 401s all wait on the same call instead of
+// each firing their own refresh request.
+let refreshPromise: Promise<string> | null = null
+
+async function refreshAccessToken(): Promise<string> {
+  if (refreshPromise) return refreshPromise
+
+  const doRefresh = async (): Promise<string> => {
+    const refreshToken = getRefreshToken()
+    if (!refreshToken) throw new Error('No refresh token available.')
+
+    const response = await fetch(`${API_BASE}/auth/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh: refreshToken }),
+    })
+
+    if (!response.ok) throw new Error('Token refresh failed.')
+
+    const data = (await response.json()) as { access: string }
+    setTokens(data.access, refreshToken)
+    return data.access
+  }
+
+  refreshPromise = doRefresh()
   try {
-    response = await fetch(`${API_BASE}${path}`, {
+    return await refreshPromise
+  } finally {
+    refreshPromise = null
+  }
+}
+
+async function doFetch(path: string, init?: RequestInit, token?: string | null): Promise<Response> {
+  try {
+    return await fetch(`${API_BASE}${path}`, {
       ...init,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...init?.headers,
       },
     })
   } catch {
     throw new NetworkError()
+  }
+}
+
+export async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const isPublic = NO_AUTH_PATHS.has(path)
+  const token = isPublic ? null : getAccessToken()
+
+  let response = await doFetch(path, init, token)
+
+  // On 401 for a protected path, attempt a single token refresh and retry.
+  if (response.status === 401 && !isPublic) {
+    try {
+      const newToken = await refreshAccessToken()
+      response = await doFetch(path, init, newToken)
+    } catch {
+      clearTokens()
+      notifySessionExpired()
+      throw new ApiError(
+        401,
+        'SESSION_EXPIRED',
+        'Your session has expired. Please sign in again.',
+        {},
+      )
+    }
   }
 
   if (response.status === 204) {
@@ -67,6 +153,9 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     if (isApiErrorBody(body)) {
       throw new ApiError(response.status, body.error.code, body.error.message, body.error.details)
+    }
+    if (isDetailErrorBody(body)) {
+      throw new ApiError(response.status, body.code ?? 'AUTH_FAILED', body.detail, {})
     }
     // A proxy or crash produced something that is not our envelope.
     throw new ApiError(
