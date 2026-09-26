@@ -1,5 +1,11 @@
 import { api } from './client'
-import type { Paginated, WorkItem, WorkItemDetail, WorkItemStatus } from './types'
+import type {
+  CreateWorkItemRequest,
+  Paginated,
+  WorkItem,
+  WorkItemDetail,
+  WorkItemStatus,
+} from './types'
 
 export interface ListParams {
   status?: WorkItemStatus | undefined
@@ -17,6 +23,7 @@ function listPath({ status, page }: ListParams): string {
 export const workItemsApi = {
   list: (params: ListParams) => api.get<Paginated<WorkItem>>(listPath(params)),
   get: (id: string) => api.get<WorkItemDetail>(`/work-items/${id}`),
+  create: (body: CreateWorkItemRequest) => api.post<WorkItem>('/work-items', body),
   analyse: (id: string) => api.post<WorkItem>(`/work-items/${id}/analyse`),
   retry: (id: string) => api.post<WorkItem>(`/work-items/${id}/retry`),
   complete: (id: string) =>

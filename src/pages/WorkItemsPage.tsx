@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 
 import { isWorkItemStatus, type WorkItemStatus } from '../api/types'
+import { NewWorkItemForm } from '../components/NewWorkItemForm'
 import { Pagination } from '../components/Pagination'
 import { StatusFilter } from '../components/StatusFilter'
 import { WorkItemDetail } from '../components/WorkItemDetail'
@@ -25,6 +27,8 @@ export function WorkItemsPage() {
 
   const page = Math.max(Number(searchParams.get('page') ?? '1') || 1, 1)
   const selectedId = searchParams.get('item') ?? undefined
+
+  const [isCreating, setIsCreating] = useState(false)
 
   const query = useWorkItems({ status, page })
 
@@ -63,8 +67,29 @@ export function WorkItemsPage() {
           <button className="button" type="button" onClick={logout}>
             Sign out
           </button>
+          <button
+            type="button"
+            className={isCreating ? 'button' : 'button button--primary'}
+            onClick={() => setIsCreating((open) => !open)}
+            aria-expanded={isCreating}
+            aria-controls="intake-panel"
+          >
+            {isCreating ? 'Cancel' : 'New item'}
+          </button>
         </div>
       </header>
+
+      {isCreating ? (
+        <div id="intake-panel">
+          <NewWorkItemForm
+            onCancel={() => setIsCreating(false)}
+            onCreated={(id) => {
+              setIsCreating(false)
+              update({ item: id, page: undefined })
+            }}
+          />
+        </div>
+      ) : null}
 
       <StatusFilter
         value={status}

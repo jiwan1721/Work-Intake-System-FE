@@ -112,6 +112,12 @@ export function isWorkItemStatus(value: string): value is WorkItemStatus {
   return (WORK_ITEM_STATUSES as readonly string[]).includes(value)
 }
 
+export interface CreateWorkItemRequest {
+  external_id: string
+  title: string
+  description: string
+}
+
 // --- Auth types -------------------------------------------------------------
 
 export interface AuthUser {
