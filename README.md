@@ -7,9 +7,18 @@ React 19 + TypeScript (Vite) frontend for the AI-Assisted Work Intake System.
 ## Setup
 
 ```bash
+cp .env.example .env.local   # copy environment template (edit as needed)
 npm install
 npm run dev
 ```
+
+`.env.local` is gitignored. `.env.example` documents every available variable
+— copy it once and tweak only what differs from the defaults.
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `VITE_API_PROXY_TARGET` | `http://localhost:8000` | Where `npm run dev` forwards `/api` requests |
+| `VITE_API_BASE_URL` | *(unset — uses proxy)* | Override to bypass the dev proxy entirely |
 
 The dev server runs at <http://localhost:5173>. Vite proxies `/api` to
 `http://localhost:8000`, so the browser only ever talks to one origin and there
