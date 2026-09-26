@@ -41,7 +41,7 @@ describe('error handling', () => {
       http.post('/api/v1/work-items', () =>
         HttpResponse.json(
           errorBody('VALIDATION_ERROR', 'The request body failed validation.', {
-            externalId: ['This field may not be blank.'],
+            external_id: ['This field may not be blank.'],
           }),
           { status: 400 },
         ),
@@ -51,7 +51,7 @@ describe('error handling', () => {
     const error = (await api.post('/work-items', {}).catch((e: unknown) => e)) as ApiError
 
     expect(error.code).toBe('VALIDATION_ERROR')
-    expect(error.details).toHaveProperty('externalId')
+    expect(error.details).toHaveProperty('external_id')
   })
 
   test('a failed fetch becomes a NetworkError, not an ApiError', async () => {

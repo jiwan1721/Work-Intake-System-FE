@@ -27,36 +27,36 @@ function detailReturns(...responses: Response[]) {
 
 const FAILED_ITEM = makeDetail({
   id: ID,
-  externalId: 'CRM-FAIL',
+  external_id: 'CRM-FAIL',
   title: 'Timed out item',
   status: 'FAILED',
-  lastError: { code: 'TIMEOUT', message: 'The model took too long to respond.' },
-  allowedActions: ['retry'],
-  attemptCount: 1,
+  last_error: { code: 'TIMEOUT', message: 'The model took too long to respond.' },
+  allowed_actions: ['retry'],
+  attempt_count: 1,
 })
 
 const REVIEWABLE_ITEM = makeDetail({
   id: ID,
-  externalId: 'CRM-OK',
+  external_id: 'CRM-OK',
   title: 'Analysed item',
   status: 'READY_FOR_REVIEW',
   analysis: { ...ANALYSED },
-  allowedActions: ['complete'],
-  attemptCount: 1,
+  allowed_actions: ['complete'],
+  attempt_count: 1,
   transitions: [
     {
-      fromStatus: 'ANALYSING',
-      toStatus: 'READY_FOR_REVIEW',
+      from_status: 'ANALYSING',
+      to_status: 'READY_FOR_REVIEW',
       actor: 'system',
       reason: 'analysis succeeded (mock)',
-      createdAt: '2026-09-22T10:15:02Z',
+      created_at: '2026-09-22T10:15:02Z',
     },
     {
-      fromStatus: 'RECEIVED',
-      toStatus: 'ANALYSING',
+      from_status: 'RECEIVED',
+      to_status: 'ANALYSING',
       actor: 'system',
       reason: 'analysis started (mock)',
-      createdAt: '2026-09-22T10:15:00Z',
+      created_at: '2026-09-22T10:15:00Z',
     },
   ],
 })
@@ -89,14 +89,14 @@ describe('failed items', () => {
 
     detailReturns(
       HttpResponse.json(FAILED_ITEM),
-      HttpResponse.json({ ...REVIEWABLE_ITEM, externalId: 'CRM-FAIL' }),
+      HttpResponse.json({ ...REVIEWABLE_ITEM, external_id: 'CRM-FAIL' }),
     )
     server.use(
       http.post(`/api/v1/work-items/${ID}/retry`, async () => {
         resolveRetry?.()
         // Hold the request open so the pending state is observable.
         await new Promise((resolve) => setTimeout(resolve, 50))
-        return HttpResponse.json({ ...REVIEWABLE_ITEM, externalId: 'CRM-FAIL' })
+        return HttpResponse.json({ ...REVIEWABLE_ITEM, external_id: 'CRM-FAIL' })
       }),
     )
 
@@ -120,8 +120,8 @@ describe('failed items', () => {
       HttpResponse.json(
         makeDetail({
           ...FAILED_ITEM,
-          allowedActions: [],
-          attemptCount: 5,
+          allowed_actions: [],
+          attempt_count: 5,
         }),
       ),
     )
@@ -133,7 +133,7 @@ describe('failed items', () => {
   })
 })
 
-describe('allowedActions drives the buttons', () => {
+describe('allowed_actions drives the buttons', () => {
   test('Complete is rendered when the server allows it', async () => {
     detailReturns(HttpResponse.json(REVIEWABLE_ITEM))
 
@@ -147,7 +147,7 @@ describe('allowedActions drives the buttons', () => {
   test('Complete is not rendered when the server does not allow it', async () => {
     detailReturns(
       HttpResponse.json(
-        makeDetail({ ...REVIEWABLE_ITEM, allowedActions: [], status: 'COMPLETED' }),
+        makeDetail({ ...REVIEWABLE_ITEM, allowed_actions: [], status: 'COMPLETED' }),
       ),
     )
 
@@ -159,7 +159,7 @@ describe('allowedActions drives the buttons', () => {
 
   test('a received item offers Analyse', async () => {
     detailReturns(
-      HttpResponse.json(makeDetail({ id: ID, status: 'RECEIVED', allowedActions: ['analyse'] })),
+      HttpResponse.json(makeDetail({ id: ID, status: 'RECEIVED', allowed_actions: ['analyse'] })),
     )
 
     renderApp(<WorkItemDetail id={ID} onClose={noop} />)
@@ -175,7 +175,7 @@ describe('conflicts', () => {
     detailReturns(
       HttpResponse.json(REVIEWABLE_ITEM),
       HttpResponse.json(
-        makeDetail({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowedActions: [] }),
+        makeDetail({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowed_actions: [] }),
       ),
     )
     server.use(
@@ -208,7 +208,7 @@ describe('analysis and history', () => {
 
     expect(await screen.findByText('Document request')).toBeInTheDocument()
     expect(screen.getByText(ANALYSED.summary)).toBeInTheDocument()
-    expect(screen.getByText(ANALYSED.recommendedAction)).toBeInTheDocument()
+    expect(screen.getByText(ANALYSED.recommended_action)).toBeInTheDocument()
     expect(screen.getByText(/mock-v1/)).toBeInTheDocument()
   })
 
@@ -278,13 +278,13 @@ describe('accessibility (FE-04)', () => {
     detailReturns(
       HttpResponse.json(REVIEWABLE_ITEM),
       HttpResponse.json(
-        makeDetail({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowedActions: [] }),
+        makeDetail({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowed_actions: [] }),
       ),
     )
     server.use(
       http.patch(`/api/v1/work-items/${ID}/status`, () => {
         patched += 1
-        return HttpResponse.json({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowedActions: [] })
+        return HttpResponse.json({ ...REVIEWABLE_ITEM, status: 'COMPLETED', allowed_actions: [] })
       }),
     )
 

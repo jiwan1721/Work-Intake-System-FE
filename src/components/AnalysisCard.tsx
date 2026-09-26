@@ -20,11 +20,11 @@ export function AnalysisCard({ analysis }: { analysis: Analysis }) {
         <dd>{analysis.summary}</dd>
 
         <dt>Recommended action</dt>
-        <dd>{analysis.recommendedAction}</dd>
+        <dd>{analysis.recommended_action}</dd>
       </dl>
 
       <p className="card__footnote">
-        Analysed {new Date(analysis.analysedAt).toLocaleString()}
+        Analysed {new Date(analysis.analysed_at).toLocaleString()}
         {analysis.model ? ` by ${analysis.model}` : ''}
       </p>
     </section>

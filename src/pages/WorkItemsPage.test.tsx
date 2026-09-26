@@ -10,15 +10,15 @@ import { server } from '../test/server'
 import { errorBody, makePage, makeWorkItem, renderApp } from '../test/utils'
 
 const FAILED = makeWorkItem({
-  externalId: 'CRM-FAIL',
+  external_id: 'CRM-FAIL',
   title: 'Timed out item',
   status: 'FAILED',
-  lastError: { code: 'TIMEOUT', message: 'The model took too long.' },
-  allowedActions: ['retry'],
-  attemptCount: 1,
+  last_error: { code: 'TIMEOUT', message: 'The model took too long.' },
+  allowed_actions: ['retry'],
+  attempt_count: 1,
 })
 
-const RECEIVED = makeWorkItem({ externalId: 'CRM-NEW', title: 'Brand new item' })
+const RECEIVED = makeWorkItem({ external_id: 'CRM-NEW', title: 'Brand new item' })
 
 function listReturns(handler: (url: URL) => Response) {
   server.use(http.get('/api/v1/work-items', ({ request }) => handler(new URL(request.url))))
@@ -154,7 +154,7 @@ describe('polling', () => {
         calls += 1
         const status = calls < 2 ? 'ANALYSING' : 'READY_FOR_REVIEW'
         return HttpResponse.json(
-          makePage([makeWorkItem({ externalId: 'CRM-BUSY', title: 'Busy item', status })]),
+          makePage([makeWorkItem({ external_id: 'CRM-BUSY', title: 'Busy item', status })]),
         )
       })
 

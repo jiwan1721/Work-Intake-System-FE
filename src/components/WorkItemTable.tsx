@@ -41,9 +41,9 @@ export function WorkItemTable({
                 type="button"
                 className="link-button"
                 onClick={() => onSelect(item.id)}
-                aria-label={`Open ${item.externalId}: ${item.title}`}
+                aria-label={`Open ${item.external_id}: ${item.title}`}
               >
-                {item.externalId}
+                {item.external_id}
               </button>
             </td>
             <td>{item.title}</td>
@@ -57,7 +57,7 @@ export function WorkItemTable({
                 <span className="muted">—</span>
               )}
             </td>
-            <td>{formatDate(item.createdAt)}</td>
+            <td>{formatDate(item.created_at)}</td>
           </tr>
         ))}
       </tbody>
